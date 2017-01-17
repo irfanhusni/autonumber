@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Register xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/crm/2011/tools/pluginregistration">
+  <Solutions>
+    <Solution Assembly="TSAD.CORE.D365.COM.AutoNumber.Plugins.dll" Id="602a7e7a-3377-4f01-a3c4-88b37fc059fd" IsolationMode="Sandbox" SourceType="Database">
+      <PluginTypes>
+        <clear />
+        <Plugin Description="Plug-in to Create of xts_customautonumber" FriendlyName="Create of xts_customautonumber" Name="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberCreate" Id="ddd7b8b9-14fd-4f37-98e0-49bd4da74292" TypeName="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberCreate">
+          <Steps>
+            <clear />
+            <Step AsyncAutoDelete="false" Name="Create of xts_customautonumber" Description="Create of xts_customautonumber" Id="ec7d0591-a7d0-e611-80e6-c4346bac9f9c" ImpersonatingUserId="00000000-0000-0000-0000-000000000000" MessageName="Create" Mode="Synchronous" PrimaryEntityName="xts_customautonumber" Rank="1" Stage="PreInsideTransaction" SupportedDeployment="ServerOnly" MessageEntityId="00000000-0000-0000-0000-000000000000">
+              <Images />
+            </Step>
+          </Steps>
+        </Plugin>
+        <Plugin Description="Plug-in to Delete of xts_customautonumber" FriendlyName="Delete of xts_customautonumber" Name="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberDelete" Id="b0c9fabc-9e7d-4339-b4a3-83e500ac772f" TypeName="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberDelete">
+          <Steps>
+            <clear />
+            <Step AsyncAutoDelete="false" Name="Delete of xts_customautonumber" Description="Delete of xts_customautonumber" Id="ef7d0591-a7d0-e611-80e6-c4346bac9f9c" ImpersonatingUserId="00000000-0000-0000-0000-000000000000" MessageName="Delete" Mode="Synchronous" PrimaryEntityName="xts_customautonumber" Rank="1" Stage="PreInsideTransaction" SupportedDeployment="ServerOnly" MessageEntityId="00000000-0000-0000-0000-000000000000">
+              <Images />
+            </Step>
+          </Steps>
+        </Plugin>
+      </PluginTypes>
+    </Solution>
+  </Solutions>
+  <XamlWorkflows />
+</Register>

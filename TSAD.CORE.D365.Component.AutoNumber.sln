@@ -1,0 +1,72 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{88A30576-7583-4F75-8136-5EFD2C14ADFF}") = "TSAD.CORE.D365.COM.AutoNumber.Package", "TSAD.CORE.D365.COM.AutoNumber.Package\TSAD.CORE.D365.COM.AutoNumber.Package.csproj", "{F48B940D-3C2D-4A42-8514-E613A4872A8C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{11D18F84-6520-4945-8A23-53E450E6D628} = {11D18F84-6520-4945-8A23-53E450E6D628}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSAD.CORE.D365.COM.AutoNumber.Plugins", "TSAD.CORE.D365.COM.AutoNumber.Plugins\TSAD.CORE.D365.COM.AutoNumber.Plugins.csproj", "{11D18F84-6520-4945-8A23-53E450E6D628}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSAD.CORE.D365.COM.AutoNumber", "TSAD.CORE.D365.COM.AutoNumber\TSAD.CORE.D365.COM.AutoNumber.csproj", "{D7642C62-8C09-46E4-A83D-CF54629BCBE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSAD.CORE.D365.COM.AutoNumber.Tests", "TSAD.CORE.D365.COM.AutoNumber.Tests\TSAD.CORE.D365.COM.AutoNumber.Tests.csproj", "{45280BA0-A3FF-4167-9244-6F1400C7EEFE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{998595A3-BBD7-4A0D-97C9-77EFFA9CC941}"
+	ProjectSection(SolutionItems) = preProject
+		NuGet.config = NuGet.config
+		TSAD.D365.snk = TSAD.D365.snk
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F48B940D-3C2D-4A42-8514-E613A4872A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F48B940D-3C2D-4A42-8514-E613A4872A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F48B940D-3C2D-4A42-8514-E613A4872A8C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F48B940D-3C2D-4A42-8514-E613A4872A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F48B940D-3C2D-4A42-8514-E613A4872A8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F48B940D-3C2D-4A42-8514-E613A4872A8C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{11D18F84-6520-4945-8A23-53E450E6D628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11D18F84-6520-4945-8A23-53E450E6D628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11D18F84-6520-4945-8A23-53E450E6D628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11D18F84-6520-4945-8A23-53E450E6D628}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7642C62-8C09-46E4-A83D-CF54629BCBE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7642C62-8C09-46E4-A83D-CF54629BCBE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7642C62-8C09-46E4-A83D-CF54629BCBE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7642C62-8C09-46E4-A83D-CF54629BCBE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45280BA0-A3FF-4167-9244-6F1400C7EEFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45280BA0-A3FF-4167-9244-6F1400C7EEFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45280BA0-A3FF-4167-9244-6F1400C7EEFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45280BA0-A3FF-4167-9244-6F1400C7EEFE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.technosoftdms.com:8081/tfs/collection2
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = TSAD.CORE.D365.COM.AutoNumber.Package\\TSAD.CORE.D365.COM.AutoNumber.Package.csproj
+		SccProjectName1 = TSAD.CORE.D365.COM.AutoNumber.Package
+		SccLocalPath1 = TSAD.CORE.D365.COM.AutoNumber.Package
+		SccProjectUniqueName2 = TSAD.CORE.D365.COM.AutoNumber.Plugins\\TSAD.CORE.D365.COM.AutoNumber.Plugins.csproj
+		SccProjectName2 = TSAD.CORE.D365.COM.AutoNumber.Plugins
+		SccLocalPath2 = TSAD.CORE.D365.COM.AutoNumber.Plugins
+		SccProjectUniqueName3 = TSAD.CORE.D365.COM.AutoNumber\\TSAD.CORE.D365.COM.AutoNumber.csproj
+		SccProjectName3 = TSAD.CORE.D365.COM.AutoNumber
+		SccLocalPath3 = TSAD.CORE.D365.COM.AutoNumber
+		SccProjectUniqueName4 = TSAD.CORE.D365.COM.AutoNumber.Tests\\TSAD.CORE.D365.COM.AutoNumber.Tests.csproj
+		SccProjectName4 = TSAD.CORE.D365.COM.AutoNumber.Tests
+		SccLocalPath4 = TSAD.CORE.D365.COM.AutoNumber.Tests
+	EndGlobalSection
+	GlobalSection(CRMSolutionProperties) = preSolution
+		SolutionIsBoundToCRM = True
+	EndGlobalSection
+EndGlobal
