@@ -16,7 +16,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
     public class UpdateCustomAutoNumber : Auto365BaseOperation<xts_customautonumber>
     {
         #region constant
-        private const string PATTERN = @"\[(.*?)\]";
+        private const string PATTERN = @"(\[#{1,}\]|\[BU\]|\[M{2,4}\]|\[Y{2,4}\])";
         private const string SHARP = "#";
         private const string BU = "BU";
         private const string SEPARATOR = "_";
@@ -126,24 +126,24 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
                     else if (matches[i].Groups[1].ToString().Contains(BU))
                     {
                         checkCount += 1;
-                    }
+                    }                    
                 }
 
                 if (string.IsNullOrEmpty(numberFormat))
-                    throw new InvalidPluginExecutionException("Invalid format of number");
+                    throw Context.Error("CAN0004");
 
                 if (matches.Count != checkCount)
                 {
                     if (string.IsNullOrEmpty(yearFormat) | string.IsNullOrEmpty(monthFormat))
-                        throw new InvalidPluginExecutionException("Invalid format on Date");
+                        throw Context.Error("CAN0005");
                 }
             }
             else
             {
-                throw new InvalidPluginExecutionException("Invalid segment format");
+                throw Context.Error("CAN0006");
             }
 
-            segmentFormatDate = string.Join("-", new string[] { (!string.IsNullOrEmpty(yearFormat)) ? yearFormat.ToLower() : string.Empty, monthFormat }.Where(s => !String.IsNullOrEmpty(s)));
+            segmentFormatDate = string.Join("-", new string[] { (!string.IsNullOrEmpty(yearFormat)) ? yearFormat.ToLower().Replace("[", string.Empty).Replace("]", string.Empty) : string.Empty, monthFormat.Replace("[", string.Empty).Replace("]", string.Empty) }.Where(s => !String.IsNullOrEmpty(s)));
             segmentFormatNumber = numberFormat;
         }
 
@@ -159,10 +159,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
                 ConcurrencyBehavior = ConcurrencyBehavior.IfRowVersionMatches
             };
 
-            var result = Service.Execute(uRequest);
-            if (result == null)
-                throw new InvalidPluginExecutionException(string.Format("Update entity {0} was failed", entity.LogicalName));
-
+            Service.Execute(uRequest);
         }
 
         /// <summary>

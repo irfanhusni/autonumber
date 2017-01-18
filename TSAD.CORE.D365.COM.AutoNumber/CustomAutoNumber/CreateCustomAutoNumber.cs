@@ -20,7 +20,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
         private const string CREATE_MESSAGE_NAME = "Create";
         private const string PROJECT_NAME = "TSAD.CORE.D365.COM.AutoNumber.Plugins";
         private const string CLASS_NAME = "TSAD.CORE.D365.COM.AutoNumber.Plugins.Generic.PreGenericCustomAutoNumberCreate";
-        private const string PATTERN = @"\[(.*?)\]";
+        private const string PATTERN = @"(\[#{1,}\]|\[BU\]|\[M{2,4}\]|\[Y{2,4}\])";
         private const string SHARP = "#";
         private const string BU = "BU";
         private readonly string[] yearFormats = { "[YYYY]", "[YYY]", "[YY]" };
@@ -38,20 +38,20 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             string attributeName = Get(e => e.xts_attributenamevalue).ToString();
             string dateFormat, numberFormat, entityDisplayName;
             dateFormat = numberFormat = entityDisplayName = string.Empty;
-
+            
             #region check is entity has custom auto number
             if (IsEntityHasCustomAutoNumber(entityName))
-                throw new InvalidPluginExecutionException(string.Format("{0} is already have custom auto number setting", entityName));
+                throw Context.Error("CAN0001", entityName);
             #endregion
 
-            #region validate entity
+                #region validate entity
             if (!ValidateEntity(entityName, out entityDisplayName))
-                throw new InvalidPluginExecutionException("Entity is doesn't exist");
+                throw Context.Error("CAN0002");
             #endregion
 
             #region validate attribute
             if (!ValidateAttributeName(entityName, attributeName))
-                throw new InvalidPluginExecutionException("Attribute is doesn't exist");
+                throw Context.Error("CAN0003");
             #endregion
 
             #region validate segment format            
@@ -59,10 +59,10 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             #endregion
 
             #region get step id
-            var stepId = GetStepId(entityDisplayName).ToString();
+            var stepName = GetStepId(entityDisplayName).ToString();
             #endregion
 
-            Set(e => e.xts_pluginstepid, stepId);
+            Set(e => e.xts_pluginstepid, stepName);
             Set(e => e.xts_segmentformatdate, dateFormat);
             Set(e => e.xts_segmentformatnumber, numberFormat);
         }
@@ -170,18 +170,18 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
                 }
 
                 if (string.IsNullOrEmpty(numberFormat))
-                    throw new InvalidPluginExecutionException("Invalid format of number");
+                    throw Context.Error("CAN0004");
 
                 if (matches.Count != checkCount)
                     if (string.IsNullOrEmpty(yearFormat) | string.IsNullOrEmpty(monthFormat))
-                        throw new InvalidPluginExecutionException("Invalid format on Date");
+                        throw Context.Error("CAN0005");
             }
             else
             {
-                throw new InvalidPluginExecutionException("Invalid segment format");
+                throw Context.Error("CAN0006");
             }
 
-            segmentFormatDate = string.Join("-", new string[] { (!string.IsNullOrEmpty(yearFormat)) ? yearFormat.ToLower() : string.Empty, monthFormat }.Where(s => !String.IsNullOrEmpty(s)));
+            segmentFormatDate = string.Join("-", new string[] { (!string.IsNullOrEmpty(yearFormat)) ? yearFormat.ToLower().Replace("[", string.Empty).Replace("]", string.Empty) : string.Empty, monthFormat.Replace("[", string.Empty).Replace("]", string.Empty) }.Where(s => !String.IsNullOrEmpty(s)));
             segmentFormatNumber = numberFormat;
         }
 
@@ -189,10 +189,10 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
         /// This method is for generate step id for specifiec entity
         /// </summary>
         /// <returns>plugin step id</returns>
-        private Guid GetStepId(string entityDisplayName)
+        private string GetStepId(string entityDisplayName)
         {
-            Guid resultId = Guid.Empty;
-
+            string stepName = string.Format("Pre{0}AutonumberCreate", entityDisplayName.Replace(" ", string.Empty));
+            
             var sdkMsgId = QuerySDKMessage();
             if (sdkMsgId != Guid.Empty)
             {
@@ -204,7 +204,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
                     {
                         var step = new SdkMessageProcessingStep();
                         step.Set(e => e.Mode, SdkMessageProcessingStep.Options.Mode.Synchronous);
-                        step.Set(e => e.Name, string.Format("Pre{0}Create", entityDisplayName.Replace(" ", string.Empty)));// Get(e => e.xts_entitynamevalue).ToString()));
+                        step.Set(e => e.Name, stepName);
                         step.Set(e => e.Rank, new int?(1));
                         step.Set(e => e.SdkMessageId, new EntityReference(SdkMessage.EntityLogicalName, sdkMsgId));
                         step.Set(e => e.SdkMessageFilterId, new EntityReference(SdkMessageFilter.EntityLogicalName, sdkMsgFilterID));
@@ -212,12 +212,11 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
                         step.Set(e => e.Stage, SdkMessageProcessingStep.Options.Stage.PreOperation);
                         step.Set(e => e.SupportedDeployment, SdkMessageProcessingStep.Options.SupportedDeployment.ServerOnly);
 
-                        resultId = Service.Create(step);
+                        Service.Create(step);
                     }
                 }
             }
-
-            return resultId;
+            return stepName;
         }
 
         /// <summary>

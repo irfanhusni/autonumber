@@ -146,10 +146,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
                 ConcurrencyBehavior = ConcurrencyBehavior.IfRowVersionMatches
             };
 
-            var result = Service.Execute(uRequest);
-            if (result == null)
-                throw new InvalidPluginExecutionException(string.Format("Update entity {0} was failed", entity.LogicalName));
-
+            Service.Execute(uRequest);            
         }
 
         /// <summary>
@@ -175,7 +172,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
                     {
                         // reset type is yearly
                         case 2:
-                            if (Int32.Parse(latestDate) != transactionDate.Year)
+                            if (Int32.Parse(latestDate) < transactionDate.Year)
                             {
                                 latestNumber = 1;
                                 isReset = true;
@@ -183,7 +180,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
                             break;
                         // reset type is monthly
                         case 3:
-                            if (Int32.Parse(latestDate.Substring(4, 2)) != transactionDate.Year && Int32.Parse(latestDate.Substring(4, 2)) != transactionDate.Month)
+                            if (Int32.Parse(latestDate.Substring(4, 2)) < transactionDate.Year && Int32.Parse(latestDate.Substring(4, 2)) < transactionDate.Month)
                             {
                                 latestNumber = 1;
                                 isReset = true;
@@ -246,19 +243,20 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
                     var splitFormat = segmentFormatDate.Split(SEPARATOR.ToCharArray());
                     yearFormat = splitFormat[0];
                     monthFormat = splitFormat[1];
+
                     if (string.IsNullOrEmpty(rplcSegmentFormat))
                     {
                         rplcSegmentFormat = segmentFormat
-                        .Replace("[" + yearFormat.ToUpper() + "]", transactionDate.ToString(yearFormat));
+                        .Replace(string.Format("[{0}]", yearFormat.ToUpper()), transactionDate.ToString(yearFormat));
                         rplcSegmentFormat = rplcSegmentFormat
-                       .Replace("[" + monthFormat + "]", transactionDate.ToString(monthFormat));
+                       .Replace(string.Format("[{0}]", monthFormat), transactionDate.ToString(monthFormat));
                     }
                     else
                     {
                         rplcSegmentFormat = rplcSegmentFormat
-                        .Replace("[" + yearFormat.ToUpper() + "]", transactionDate.ToString(yearFormat));
+                        .Replace(string.Format("[{0}]", yearFormat.ToUpper()), transactionDate.ToString(yearFormat));
                         rplcSegmentFormat = rplcSegmentFormat
-                       .Replace("[" + monthFormat + "]", transactionDate.ToString(monthFormat));
+                       .Replace(string.Format("[{0}]", monthFormat), transactionDate.ToString(monthFormat));
                     }
                 }
 
@@ -270,12 +268,12 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
                     if (string.IsNullOrEmpty(rplcSegmentFormat))
                     {
                         rplcSegmentFormat = segmentFormat
-                        .Replace("[" + yearFormat.ToUpper() + "]", transactionDate.ToString(yearFormat));
+                        .Replace(string.Format("[{0}]", yearFormat.ToUpper()), transactionDate.ToString(yearFormat));
                     }
                     else
                     {
                         rplcSegmentFormat = rplcSegmentFormat
-                        .Replace("[" + yearFormat.ToUpper() + "]", transactionDate.ToString(yearFormat));
+                        .Replace(string.Format("[{0}]",yearFormat.ToUpper()), transactionDate.ToString(yearFormat));
                     }
                 }
 
@@ -287,12 +285,12 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
                     if (string.IsNullOrEmpty(rplcSegmentFormat))
                     {
                         rplcSegmentFormat = segmentFormat
-                        .Replace("[" + monthFormat + "]", transactionDate.ToString(monthFormat));
+                        .Replace(string.Format("[{0}]", monthFormat), transactionDate.ToString(monthFormat));
                     }
                     else
                     {
                         rplcSegmentFormat = rplcSegmentFormat
-                        .Replace("[" + monthFormat + "]", transactionDate.ToString(monthFormat));
+                        .Replace(string.Format("[{0}]",monthFormat), transactionDate.ToString(monthFormat));
                     }
                 }
             }
@@ -303,12 +301,12 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
             if (string.IsNullOrEmpty(rplcSegmentFormat))
             {
                 rplcSegmentFormat = segmentFormat
-                    .Replace("[" + autoNumberEntity.Get(e => e.xts_segmentformatnumber) + "]", segmentNumber);
+                    .Replace(autoNumberEntity.Get(e => e.xts_segmentformatnumber), segmentNumber);
             }
             else
             {
                 rplcSegmentFormat = rplcSegmentFormat
-                    .Replace("[" + autoNumberEntity.Get(e => e.xts_segmentformatnumber) + "]", segmentNumber);
+                    .Replace(autoNumberEntity.Get(e => e.xts_segmentformatnumber), segmentNumber);
             }
             #endregion
             
