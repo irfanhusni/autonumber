@@ -9,12 +9,10 @@
 //     Runtime Version:4.0.30319.1
 // </auto-generated>
 
-using System;
-using System.ServiceModel;
 using Microsoft.Xrm.Sdk;
-using TSAD.XRM.Framework.Auto365.Plugin;
-using TSAD.CORE.D365.Entities;
 using TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber;
+using TSAD.CORE.D365.Entities;
+using TSAD.XRM.Framework.Auto365.Plugin;
 
 namespace TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber
 {
@@ -24,7 +22,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber
     /// </summary>    
     public class PreCustomAutoNumberDelete : Auto365BasePlugin<xts_customautonumber>, IPlugin
     {
-        protected PreCustomAutoNumberDelete(string unsecure = null, string secure = null) : base(unsecure, secure)
+        public PreCustomAutoNumberDelete(string unsecure = null, string secure = null) : base(unsecure, secure)
         {
         }
 

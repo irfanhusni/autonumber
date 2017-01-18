@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Register xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/crm/2011/tools/pluginregistration">
   <Solutions>
-    <Solution Assembly="TSAD.CORE.D365.COM.AutoNumber.Plugins.dll" Id="602a7e7a-3377-4f01-a3c4-88b37fc059fd" IsolationMode="Sandbox" SourceType="Database">
+    <Solution Assembly="TSAD.CORE.D365.COM.AutoNumber.Plugins.dll" Id="2d56f543-7e92-4e32-9092-171fdea0f0e9" IsolationMode="Sandbox" SourceType="Database">
       <PluginTypes>
         <clear />
-        <Plugin Description="Plug-in to Create of xts_customautonumber" FriendlyName="Create of xts_customautonumber" Name="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberCreate" Id="ddd7b8b9-14fd-4f37-98e0-49bd4da74292" TypeName="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberCreate">
+        <Plugin Description="Plug-in to Create of xts_customautonumber" FriendlyName="Create of xts_customautonumber" Name="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberCreate" Id="d21035e3-4026-432e-8729-107ff066ddcc" TypeName="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberCreate">
           <Steps>
             <clear />
-            <Step AsyncAutoDelete="false" Name="Create of xts_customautonumber" Description="Create of xts_customautonumber" Id="ec7d0591-a7d0-e611-80e6-c4346bac9f9c" ImpersonatingUserId="00000000-0000-0000-0000-000000000000" MessageName="Create" Mode="Synchronous" PrimaryEntityName="xts_customautonumber" Rank="1" Stage="PreInsideTransaction" SupportedDeployment="ServerOnly" MessageEntityId="00000000-0000-0000-0000-000000000000">
+            <Step AsyncAutoDelete="false" Name="PreCustomAutoNumberCreate" Description="Create of xts_customautonumber" Id="9b102bc2-8ddc-e611-80e7-c4346bac9f9c" ImpersonatingUserId="00000000-0000-0000-0000-000000000000" MessageName="Create" Mode="Synchronous" PrimaryEntityName="xts_customautonumber" Rank="1" Stage="PreInsideTransaction" SupportedDeployment="ServerOnly" MessageEntityId="00000000-0000-0000-0000-000000000000">
               <Images />
             </Step>
           </Steps>
         </Plugin>
-        <Plugin Description="Plug-in to Delete of xts_customautonumber" FriendlyName="Delete of xts_customautonumber" Name="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberDelete" Id="b0c9fabc-9e7d-4339-b4a3-83e500ac772f" TypeName="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberDelete">
+        <Plugin Description="Plug-in to Delete of xts_customautonumber" FriendlyName="Delete of xts_customautonumber" Name="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberDelete" Id="a8ba9489-be6d-4819-85e7-1b9918e48b53" TypeName="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberDelete">
           <Steps>
             <clear />
-            <Step AsyncAutoDelete="false" Name="Delete of xts_customautonumber" Description="Delete of xts_customautonumber" Id="ef7d0591-a7d0-e611-80e6-c4346bac9f9c" ImpersonatingUserId="00000000-0000-0000-0000-000000000000" MessageName="Delete" Mode="Synchronous" PrimaryEntityName="xts_customautonumber" Rank="1" Stage="PreInsideTransaction" SupportedDeployment="ServerOnly" MessageEntityId="00000000-0000-0000-0000-000000000000">
+            <Step AsyncAutoDelete="false" Name="PreCustomAutoNumberDelete" Description="Delete of xts_customautonumber" Id="9e102bc2-8ddc-e611-80e7-c4346bac9f9c" ImpersonatingUserId="00000000-0000-0000-0000-000000000000" MessageName="Delete" Mode="Synchronous" PrimaryEntityName="xts_customautonumber" Rank="1" Stage="PreInsideTransaction" SupportedDeployment="ServerOnly" MessageEntityId="00000000-0000-0000-0000-000000000000">
               <Images />
             </Step>
           </Steps>
         </Plugin>
+        <Plugin Description="Plug-in to Update of xts_customautonumber" FriendlyName="Update of xts_customautonumber" Name="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberUpdate" Id="a53ef45e-9a20-4202-9376-3b7a198d1576" TypeName="TSAD.CORE.D365.COM.AutoNumber.Plugins.CustomAutoNumber.PreCustomAutoNumberUpdate">
+          <Steps>
+            <clear />
+            <Step AsyncAutoDelete="false" Name="PreCustomAutoNumberUpdate" Description="Update of xts_customautonumber" Id="a1102bc2-8ddc-e611-80e7-c4346bac9f9c" ImpersonatingUserId="00000000-0000-0000-0000-000000000000" MessageName="Update" Mode="Synchronous" PrimaryEntityName="xts_customautonumber" Rank="1" Stage="PreInsideTransaction" SupportedDeployment="ServerOnly" MessageEntityId="00000000-0000-0000-0000-000000000000">
+              <Images />
+            </Step>
+          </Steps>
+        </Plugin>
+        <Plugin Description="Plug-in to Create of generic entity" FriendlyName="Create of generic entity" Name="TSAD.CORE.D365.COM.AutoNumber.Plugins.Generic.PreGenericCustomAutoNumberCreate" Id="2b053ec9-2005-412b-9e1d-6c6ddb02e4f9" TypeName="TSAD.CORE.D365.COM.AutoNumber.Plugins.Generic.PreGenericCustomAutoNumberCreate" />
       </PluginTypes>
     </Solution>
   </Solutions>

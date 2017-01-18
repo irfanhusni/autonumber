@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TSAD.CORE.D365.Entities;
-using TSAD.XRM.Framework.Auto365.Plugin;
-using TSAD.XRM.Framework;
-using Microsoft.Xrm.Sdk.Query;
-using Microsoft.Xrm.Sdk;
+﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Query;
+using System;
+using System.Linq;
 using System.Text.RegularExpressions;
+using TSAD.CORE.D365.Entities;
+using TSAD.XRM.Framework;
+using TSAD.XRM.Framework.Auto365.Plugin;
 
 namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
 {
+    /// <summary>
+    /// This class is used for create custom auto number, once it called, it will create step of specifiec entity
+    /// </summary>
     public class CreateCustomAutoNumber : Auto365BaseOperation<xts_customautonumber>
     {
         #region constant of this class
@@ -22,6 +22,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
         private const string CLASS_NAME = "TSAD.CORE.D365.COM.AutoNumber.Plugins.Generic.PreGenericCustomAutoNumberCreate";
         private const string PATTERN = @"\[(.*?)\]";
         private const string SHARP = "#";
+        private const string BU = "BU";
         private readonly string[] yearFormats = { "[YYYY]", "[YYY]", "[YY]" };
         private readonly string[] monthFormats = { "[MM]", "[MMM]", "[MMMM]" };
         #endregion
@@ -35,8 +36,16 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
         {
             string entityName = Get(e => e.xts_entitynamevalue).ToString();
             string attributeName = Get(e => e.xts_attributenamevalue).ToString();
+            string dateFormat, numberFormat, entityDisplayName;
+            dateFormat = numberFormat = entityDisplayName = string.Empty;
+
+            #region check is entity has custom auto number
+            if (IsEntityHasCustomAutoNumber(entityName))
+                throw new InvalidPluginExecutionException(string.Format("{0} is already have custom auto number setting", entityName));
+            #endregion
+
             #region validate entity
-            if (!ValidateEntity(entityName))
+            if (!ValidateEntity(entityName, out entityDisplayName))
                 throw new InvalidPluginExecutionException("Entity is doesn't exist");
             #endregion
 
@@ -45,14 +54,13 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
                 throw new InvalidPluginExecutionException("Attribute is doesn't exist");
             #endregion
 
-            #region validate segment format
-            string dateFormat, numberFormat;
-            dateFormat = numberFormat = string.Empty;
+            #region validate segment format            
             ValidateSegmentFormat(Get(e => e.xts_segmentformat), out dateFormat, out numberFormat);
             #endregion
 
-            var stepId = GetStepId().ToString();
-            
+            #region get step id
+            var stepId = GetStepId(entityDisplayName).ToString();
+            #endregion
 
             Set(e => e.xts_pluginstepid, stepId);
             Set(e => e.xts_segmentformatdate, dateFormat);
@@ -67,9 +75,11 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
         /// </summary>
         /// <param name="entityName">entity name</param>
         /// <returns>true if valid</returns>
-        private bool ValidateEntity(string entityName)
+        private bool ValidateEntity(string entityName, out string displayName)
         {
             bool isValid = false;
+            displayName = string.Empty;
+
             // Define entity request
             var entityRequest = new RetrieveAllEntitiesRequest
             {
@@ -80,10 +90,11 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             // Call execute to retrieve entities
             var entityResult = (RetrieveAllEntitiesResponse)Service.Execute(entityRequest);
             int isFound = entityResult.EntityMetadata.Where(x => x.LogicalName == entityName).Count();
-
+            
             // Check entity is exist or not
             if (isFound > 0)
             {
+                displayName = entityResult.EntityMetadata.Where(x => x.LogicalName == entityName).Single().DisplayName.UserLocalizedLabel.Label;
                 isValid = true;
             }
 
@@ -147,9 +158,13 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
                         yearFormat = matches[i].Groups[1].ToString();
                         checkCount += 1;
                     }
-                    else if(monthFormats.Contains(matches[i].Groups[0].ToString()))
+                    else if (monthFormats.Contains(matches[i].Groups[0].ToString()))
                     {
                         monthFormat = matches[i].Groups[1].ToString();
+                        checkCount += 1;
+                    }
+                    else if (matches[i].Groups[1].ToString().Contains(BU))
+                    {
                         checkCount += 1;
                     }
                 }
@@ -158,17 +173,15 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
                     throw new InvalidPluginExecutionException("Invalid format of number");
 
                 if (matches.Count != checkCount)
-                {
                     if (string.IsNullOrEmpty(yearFormat) | string.IsNullOrEmpty(monthFormat))
                         throw new InvalidPluginExecutionException("Invalid format on Date");
-                }
             }
             else
             {
                 throw new InvalidPluginExecutionException("Invalid segment format");
             }
 
-            segmentFormatDate = string.Join("-", new string[] { yearFormat.ToLower(), monthFormat }.Where(s => !String.IsNullOrEmpty(s)));
+            segmentFormatDate = string.Join("-", new string[] { (!string.IsNullOrEmpty(yearFormat)) ? yearFormat.ToLower() : string.Empty, monthFormat }.Where(s => !String.IsNullOrEmpty(s)));
             segmentFormatNumber = numberFormat;
         }
 
@@ -176,7 +189,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
         /// This method is for generate step id for specifiec entity
         /// </summary>
         /// <returns>plugin step id</returns>
-        private Guid GetStepId()
+        private Guid GetStepId(string entityDisplayName)
         {
             Guid resultId = Guid.Empty;
 
@@ -184,23 +197,23 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             if (sdkMsgId != Guid.Empty)
             {
                 var sdkMsgFilterID = QuerySDKMessageFilter(Get(e => e.xts_entitynamevalue).ToString(), sdkMsgId);
-                if(sdkMsgFilterID != Guid.Empty)
+                if (sdkMsgFilterID != Guid.Empty)
                 {
                     var pluginTypeId = QueryPluginType();
-                    if(pluginTypeId != Guid.Empty)
+                    if (pluginTypeId != Guid.Empty)
                     {
-                        var step = new SdkMessageProcessingStep();                        
+                        var step = new SdkMessageProcessingStep();
                         step.Set(e => e.Mode, SdkMessageProcessingStep.Options.Mode.Synchronous);
-                        step.Set(e => e.Name, string.Format("Counter for the {0} Entity ", Get(e => e.xts_entitynamevalue).ToString()));
+                        step.Set(e => e.Name, string.Format("Pre{0}Create", entityDisplayName.Replace(" ", string.Empty)));// Get(e => e.xts_entitynamevalue).ToString()));
                         step.Set(e => e.Rank, new int?(1));
                         step.Set(e => e.SdkMessageId, new EntityReference(SdkMessage.EntityLogicalName, sdkMsgId));
                         step.Set(e => e.SdkMessageFilterId, new EntityReference(SdkMessageFilter.EntityLogicalName, sdkMsgFilterID));
                         step.Set(e => e.EventHandler, new EntityReference(PluginType.EntityLogicalName, pluginTypeId));
                         step.Set(e => e.Stage, SdkMessageProcessingStep.Options.Stage.PreOperation);
                         step.Set(e => e.SupportedDeployment, SdkMessageProcessingStep.Options.SupportedDeployment.ServerOnly);
-                        
+
                         resultId = Service.Create(step);
-                    }                    
+                    }
                 }
             }
 
@@ -227,8 +240,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
 
             // Add message name value to name attributes
             QueryByAttribute qba = queryByAttribute;
-            qba.Attributes.Add("name");
-            qba.Values.Add(CREATE_MESSAGE_NAME);
+            qba.AddAttributeValue(Helper.Name<SdkMessage>(e => e.Name), CREATE_MESSAGE_NAME);
 
             var result = Service.RetrieveMultiple(qba);
             if (result.Entities.Count > 0)
@@ -262,10 +274,8 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             // Add entity name value to primaryobjecttypecode attributes
             // Add sdk message id to sdkmessageid attributes
             QueryByAttribute qba = queryByAttribute;
-            qba.Attributes.Add("primaryobjecttypecode");
-            qba.Values.Add(entityName);
-            qba.Attributes.Add("sdkmessageid");
-            qba.Values.Add(sdkMessageId);
+            qba.AddAttributeValue(Helper.Name<SdkMessageFilter>(e => e.PrimaryObjectTypeCode), entityName);
+            qba.AddAttributeValue(Helper.Name<SdkMessageFilter>(e => e.SdkMessageId), sdkMessageId);
 
             var result = Service.RetrieveMultiple(qba);
             if (result.Entities.Count > 0)
@@ -296,10 +306,8 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             // Add project name value to assemblyname attributes
             // Add class name value to typename attributes
             QueryByAttribute qba = queryByAttribute;
-            qba.Attributes.Add("assemblyname");
-            qba.Values.Add(PROJECT_NAME);
-            qba.Attributes.Add("typename");
-            qba.Values.Add(CLASS_NAME);
+            qba.AddAttributeValue(Helper.Name<PluginType>(e => e.AssemblyName), PROJECT_NAME);
+            qba.AddAttributeValue(Helper.Name<PluginType>(e => e.TypeName), CLASS_NAME);
 
             var result = Service.RetrieveMultiple(qba);
             if (result.Entities.Count > 0)
@@ -308,9 +316,33 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             }
 
             return resultId;
-        }        
+        }
 
-       
+        /// <summary>
+        /// This method is used for query auto number by soecifiec entity
+        /// </summary>
+        /// <param name="entityName">entity name</param>
+        /// <returns>xts_customautonumber</returns>
+        private bool IsEntityHasCustomAutoNumber(string entityName)
+        {
+            bool isExist = false;
+
+            // Define query attribute for sdk message
+            QueryByAttribute queryByAttribute = new QueryByAttribute()
+            {
+                EntityName = xts_customautonumber.EntityLogicalName,
+                ColumnSet = new ColumnSet(true)
+            };
+
+            queryByAttribute.AddAttributeValue(Helper.Name<xts_customautonumber>(e => e.xts_entitynamevalue), entityName);
+
+            var result = Service.RetrieveMultiple(queryByAttribute);
+            if (result.Entities.Count > 0)
+                isExist = true;
+
+            return isExist;
+        }
+
         #endregion
     }
 }
