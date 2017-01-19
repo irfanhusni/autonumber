@@ -182,7 +182,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             }
 
             segmentFormatDate = string.Join("-", new string[] { (!string.IsNullOrEmpty(yearFormat)) ? yearFormat.ToLower().Replace("[", string.Empty).Replace("]", string.Empty) : string.Empty, monthFormat.Replace("[", string.Empty).Replace("]", string.Empty) }.Where(s => !String.IsNullOrEmpty(s)));
-            segmentFormatNumber = numberFormat;
+            segmentFormatNumber = numberFormat.Replace("[", string.Empty).Replace("]", string.Empty);
         }
 
         /// <summary>

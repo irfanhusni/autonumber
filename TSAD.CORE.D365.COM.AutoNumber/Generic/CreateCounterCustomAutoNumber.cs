@@ -39,7 +39,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
             latestDate = segmentFormat = segmentFormatDate = newLatestdate = buName = period = string.Empty;
             DateTime transactionDate;
             bool isReset = false;
-            Guid buId = Context.Input.Attributes.Contains("xts_businessunitid") ? ((EntityReference)Context.Input.Attributes["xts_businessunitid"]).Id : Guid.Empty;
+            Guid buId = Get<EntityReference>("xts_businessunitid") != null ? Get<EntityReference>("xts_businessunitid").Id : Guid.Empty;
 
             var customAutoNumber = QueryCustomAutoNumber(Context.Input.LogicalName);
             var customAutonumberIndex = QueryCustomAutoNumberIndex(customAutoNumber.Id);
@@ -48,7 +48,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
                 #region populate entity from query custom auto number and custom autonumber index response
                 resetBy = customAutoNumber.Get(e => e.xts_resettype) != null ? ((OptionSetValue)customAutoNumber.Get(e => e.xts_resettype)).Value : 0;
                 segmentFormatDate = customAutoNumber.Get(e => e.xts_segmentformatdate) != null ? customAutoNumber.Get(e => e.xts_segmentformatdate) : string.Empty;
-                buName = customAutoNumber.Get(e => e.xts_BusinessUnitAttributeNameValue) != null ? GetBusinessUnitName((EntityReference)Context.Input.Attributes[customAutoNumber.Get(e => e.xts_BusinessUnitAttributeNameValue)]) : string.Empty;
+                buName = customAutoNumber.Get(e => e.xts_BusinessUnitAttributeNameValue) != null ? GetBusinessUnitName(Get<EntityReference>(customAutoNumber.Get(e => e.xts_BusinessUnitAttributeNameValue))) : string.Empty;
                 transactionDate = customAutoNumber.Get(e => e.xts_TransactionDateAttributeNameValue) != null ? GetTransactionDate(customAutoNumber.Get(e => e.xts_TransactionDateAttributeNameValue)) : DateTime.Now;
                 if (customAutonumberIndex != null)
                 {
@@ -83,13 +83,10 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
                     autoNumberIndex.RowVersion = customAutonumberIndex.RowVersion;
 
                     if (buId != Guid.Empty)
-                    {
                         autoNumberIndex.Set(e => e.xts_BusinessUnitId, new EntityReference(BusinessUnit.EntityLogicalName, buId));
-                    }
                     else
-                    {
                         autoNumberIndex.Set(e => e.xts_BusinessUnitId, null);
-                    }
+
                     if (!customAutonumberIndex.ContainsAny(e => e.xts_Period))
                         autoNumberIndex.Set(e => e.xts_Period, period);
                     if (!customAutonumberIndex.ContainsAny(e => e.xts_name))
@@ -301,12 +298,12 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
             if (string.IsNullOrEmpty(rplcSegmentFormat))
             {
                 rplcSegmentFormat = segmentFormat
-                    .Replace(autoNumberEntity.Get(e => e.xts_segmentformatnumber), segmentNumber);
+                    .Replace(string.Format("[{0}]",autoNumberEntity.Get(e => e.xts_segmentformatnumber)), segmentNumber);
             }
             else
             {
                 rplcSegmentFormat = rplcSegmentFormat
-                    .Replace(autoNumberEntity.Get(e => e.xts_segmentformatnumber), segmentNumber);
+                    .Replace(string.Format("[{0}]", autoNumberEntity.Get(e => e.xts_segmentformatnumber)), segmentNumber);
             }
             #endregion
             
@@ -351,7 +348,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.Generic
         /// <returns>transaction date</returns>
         private DateTime GetTransactionDate(string attributeName)
         {
-            return (DateTime)Context.Input.Attributes[attributeName];
+            return Get<DateTime>(attributeName);
         }
 
         /// <summary>

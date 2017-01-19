@@ -32,7 +32,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
 
         protected override void HandleExecute()
         {
-            int resetType = Context.Input.ContainsAny(e => e.xts_resettype) ? Get(e => e.xts_resettype).Value : 0;
+            int resetType = Get(e => e.xts_resettype) != null ? Get(e => e.xts_resettype).Value : 0;
             string period = string.Empty;
             DateTime dt;
             string dateFormat, numberFormat;
@@ -144,7 +144,7 @@ namespace TSAD.CORE.D365.COM.AutoNumber.CustomAutoNumber
             }
 
             segmentFormatDate = string.Join("-", new string[] { (!string.IsNullOrEmpty(yearFormat)) ? yearFormat.ToLower().Replace("[", string.Empty).Replace("]", string.Empty) : string.Empty, monthFormat.Replace("[", string.Empty).Replace("]", string.Empty) }.Where(s => !String.IsNullOrEmpty(s)));
-            segmentFormatNumber = numberFormat;
+            segmentFormatNumber = numberFormat.Replace("[", string.Empty).Replace("]", string.Empty);
         }
 
         /// <summary>
